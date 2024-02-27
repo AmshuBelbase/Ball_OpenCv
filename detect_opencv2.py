@@ -5,7 +5,7 @@ import numpy as np
 
 
 def build_model(is_cuda):
-    net = cv2.dnn.readNet("best.onnx")
+    net = cv2.dnn.readNet("./best.onnx")
     if is_cuda:
         print("Attempting to use CUDA")
         net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
@@ -23,7 +23,7 @@ SCORE_THRESHOLD = 0.2
 NMS_THRESHOLD = 0.4
 CONFIDENCE_THRESHOLD = 0.4
 
-FRAME_SKIP = 10  # Number of frames to skip
+FRAME_SKIP = 2  # Number of frames to skip
 
 
 def detect(image, net):
@@ -35,14 +35,14 @@ def detect(image, net):
 
 
 def load_capture():
-    # capture = cv2.VideoCapture("video17.mp4")
-    capture = cv2.VideoCapture(1)  # Open camera capture object
+    # capture = cv2.VideoCapture("./video17.mp4")
+    capture = cv2.VideoCapture(0)  # Open camera capture object
     return capture
 
 
 def load_classes():
     class_list = []
-    with open("classes.txt", "r") as f:
+    with open("./classes.txt", "r") as f:
         class_list = [cname.strip() for cname in f.readlines()]
     return class_list
 
