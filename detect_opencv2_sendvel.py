@@ -2,8 +2,9 @@ import cv2
 import time
 import sys
 import numpy as np
-import serial 
+# import serial 
 import time
+import matplotlib.pyplot as plt
 
 def build_model(is_cuda):
     net = cv2.dnn.readNet("./best.onnx")
@@ -37,7 +38,7 @@ def detect(image, net):
 
 def load_capture():
     # capture = cv2.VideoCapture("./video17.mp4")
-    capture = cv2.VideoCapture(0)  # Open camera capture object
+    capture = cv2.VideoCapture(1)  # Open camera capture object
     return capture
 
 
@@ -157,9 +158,25 @@ while True:
         cv2.putText(frame, class_list[classid], (box[0],
                     box[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 0, 0))
         print(box)
-        linear_x = 4
-        linear_y = 4
+        dist = 0
+        if(box[2]>box[3]):
+            dist = box[2]
+        else:
+            dist = box[3]
+        width_height_max = [16, 18, 20, 21, 25, 28, 33, 40, 48, 54, 58, 64, 69, 74, 85]
+        ball_distance = [310, 280, 250, 230, 200, 180, 150, 125, 100, 90, 80, 70, 60, 50, 40] 
+        dist = np.interp(dist, width_height_max, ball_distance)
+        dist = int(dist)
+        linear_x = int(box[0]/dist)
+        linear_y = int(box[1]/dist)
         angular_z = 0
+        plt.arrow(0,0,linear_x,linear_y, width=0.5)
+        plt.show(block=False)
+        plt.pause(0.1) 
+        
+        inp_values = [310,280,250,230,200,180,150,125,100,90,80,70,60,50,40]
+        ouput_values = [16,18,20,21,25,28,33,40,48,54,58,64,69,74,85]
+
         matrix_4x3 = np.array([[15.75, 0, -5.66909078166105],
                             [0, 15.75, 5.66909078166105],
                             [-15.75, 0, 5.66909078166105],
@@ -168,28 +185,28 @@ while True:
                             [linear_y],
                             [angular_z]])
         result_matrix = np.dot(matrix_4x3, matrix_3x1) 
-        serial_port = '/dev/ttyACM0'
-        baud_rate = 115200
-        with serial.Serial(serial_port, baud_rate, timeout=1) as ser:
-            # Open serial port
-            time.sleep(2) 
+        # serial_port = '/dev/ttyACM0'
+        # baud_rate = 115200
+        # with serial.Serial(serial_port, baud_rate, timeout=1) as ser:
+        #     # Open serial port
+        #     time.sleep(2) 
 
-            # Define floats to send
-            fr = result_matrix[0,0]
-            fl = result_matrix[1,0]
-            bl = result_matrix[2,0]
-            br = result_matrix[3,0]
+        #     # Define floats to send
+        #     fr = result_matrix[0,0]
+        #     fl = result_matrix[1,0]
+        #     bl = result_matrix[2,0]
+        #     br = result_matrix[3,0]
 
-            # Convert to bytes
-            data = (str(fr) + '|' + 
-                    str(fl) + '|' +
-                    str(bl) + '|' +
-                    str(br)) + "#"
+        #     # Convert to bytes
+        #     data = (str(fr) + '|' + 
+        #             str(fl) + '|' +
+        #             str(bl) + '|' +
+        #             str(br)) + "#"
             
-            # Send data
-            ser.write(data.encode())  
-            print(f"Sent: {data}")
-        print("Front Right: {result_matrix[0,0]}, Front Left: {result_matrix[1,0]}, Back Left: {result_matrix[2,0]}, Back Right: {result_matrix[3,0]}")
+        #     # Send data
+        #     ser.write(data.encode())  
+        #     print(f"Sent: {data}")
+        print("Front Right: "+{result_matrix[0,0]}+", Front Left: "+{result_matrix[1,0]}+", Back Left: "+{result_matrix[2,0]}+", Back Right: "+{result_matrix[3,0]})
 
     if frame_count >= 0:  # 30
         end = time.time_ns()
