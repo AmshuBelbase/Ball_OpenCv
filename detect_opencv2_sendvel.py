@@ -2,7 +2,7 @@ import cv2
 import time
 import sys
 import numpy as np
-# import serial 
+import serial 
 import time
 import matplotlib.pyplot as plt
 
@@ -38,7 +38,7 @@ def detect(image, net):
 
 def load_capture():
     # capture = cv2.VideoCapture("./video17.mp4")
-    capture = cv2.VideoCapture(1)  # Open camera capture object
+    capture = cv2.VideoCapture(0)  # Open camera capture object
     return capture
 
 
@@ -185,28 +185,28 @@ while True:
                             [linear_y],
                             [angular_z]])
         result_matrix = np.dot(matrix_4x3, matrix_3x1) 
-        # serial_port = '/dev/ttyACM0'
-        # baud_rate = 115200
-        # with serial.Serial(serial_port, baud_rate, timeout=1) as ser:
-        #     # Open serial port
-        #     time.sleep(2) 
+        serial_port = '/dev/ttyACM0'
+        baud_rate = 115200
+        with serial.Serial(serial_port, baud_rate, timeout=1) as ser:
+            # Open serial port
+            time.sleep(2) 
 
-        #     # Define floats to send
-        #     fr = result_matrix[0,0]
-        #     fl = result_matrix[1,0]
-        #     bl = result_matrix[2,0]
-        #     br = result_matrix[3,0]
+            # Define floats to send
+            fr = result_matrix[0,0]
+            fl = result_matrix[1,0]
+            bl = result_matrix[2,0]
+            br = result_matrix[3,0]
 
-        #     # Convert to bytes
-        #     data = (str(fr) + '|' + 
-        #             str(fl) + '|' +
-        #             str(bl) + '|' +
-        #             str(br)) + "#"
+            # Convert to bytes
+            data = (str(fr) + '|' + 
+                    str(fl) + '|' +
+                    str(bl) + '|' +
+                    str(br)) + "#"
             
-        #     # Send data
-        #     ser.write(data.encode())  
-        #     print(f"Sent: {data}")
-        print("Front Right: "+{result_matrix[0,0]}+", Front Left: "+{result_matrix[1,0]}+", Back Left: "+{result_matrix[2,0]}+", Back Right: "+{result_matrix[3,0]})
+            # Send data
+            ser.write(data.encode())  
+            print(f"Sent: {data}")
+        #print("Front Right: "+{result_matrix[0,0]}+", Front Left: "+{result_matrix[1,0]}+", Back Left: "+{result_matrix[2,0]}+", Back Right: "+{result_matrix[3,0]})
 
     if frame_count >= 0:  # 30
         end = time.time_ns()
