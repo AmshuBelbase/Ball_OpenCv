@@ -23,7 +23,7 @@ SCORE_THRESHOLD = 0.2
 NMS_THRESHOLD = 0.4
 CONFIDENCE_THRESHOLD = 0.4
 
-FRAME_SKIP = 2  # Number of frames to skip
+FRAME_SKIP = 10  # Number of frames to skip
 
 
 def detect(image, net):
@@ -36,7 +36,7 @@ def detect(image, net):
 
 def load_capture():
     # capture = cv2.VideoCapture("./video17.mp4")
-    capture = cv2.VideoCapture(1)  # Open camera capture object
+    capture = cv2.VideoCapture(0)  # Open camera capture object
     return capture
 
 
@@ -155,6 +155,8 @@ while True:
                       (box[0] + box[2], box[1]), color, -1)
         cv2.putText(frame, class_list[classid], (box[0],
                     box[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 0, 0))
+        height, width, channels = frame.shape 
+        print("Width:", width)
         print(box)
 
     if frame_count >= 0:  # 30
