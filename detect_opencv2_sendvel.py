@@ -185,27 +185,27 @@ while True:
                             [linear_y],
                             [angular_z]])
         result_matrix = np.dot(matrix_4x3, matrix_3x1) 
-        serial_port = '/dev/ttyACM0'
-        baud_rate = 115200
-        with serial.Serial(serial_port, baud_rate, timeout=1) as ser:
-            # Open serial port
-            time.sleep(2) 
+        # serial_port = '/dev/ttyACM0'
+        # baud_rate = 115200
+        # with serial.Serial(serial_port, baud_rate, timeout=1) as ser:
+        #     # Open serial port
+        #     time.sleep(2) 
 
-            # Define floats to send
-            fr = result_matrix[0,0]
-            fl = result_matrix[1,0]
-            bl = result_matrix[2,0]
-            br = result_matrix[3,0]
+        #     # Define floats to send
+        #     fr = result_matrix[0,0]
+        #     fl = result_matrix[1,0]
+        #     bl = result_matrix[2,0]
+        #     br = result_matrix[3,0]
 
-            # Convert to bytes
-            data = (str(fr) + '|' + 
-                    str(fl) + '|' +
-                    str(bl) + '|' +
-                    str(br)) + "#"
+        #     # Convert to bytes
+        #     data = (str(fr) + '|' + 
+        #             str(fl) + '|' +
+        #             str(bl) + '|' +
+        #             str(br)) + "#"
             
-            # Send data
-            ser.write(data.encode())  
-            print(f"Sent: {data}")
+        #     # Send data
+        #     ser.write(data.encode())  
+        #     print(f"Sent: {data}")
         #print("Front Right: "+{result_matrix[0,0]}+", Front Left: "+{result_matrix[1,0]}+", Back Left: "+{result_matrix[2,0]}+", Back Right: "+{result_matrix[3,0]})
 
     if frame_count >= 0:  # 30
